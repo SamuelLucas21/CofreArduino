@@ -1,0 +1,124 @@
+/*Caso acabe afetando no funcionamentos da tela, elimine os espaços dos diretórios*/
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap');
+
+
+body {
+    margin: 0;
+    font-family: 'Nunito', sans-serif;
+    
+    background-image: url('5.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+
+.main-login {
+    width: 100vw;
+    height: 100vh;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+
+.center-login{
+    width: 50vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-login{
+    width: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 30px 0px;
+    background-color: transparent;
+    background-color: rgba(128, 128, 128, 0.24);
+
+    border-radius: 10%;    /*Estamos tendo problema com as sombras no linux   border-radius: 20px; */
+    
+    box-shadow: 0px 10px 40px rgba(13, 87, 2, 0.859);    
+}
+
+.card-login > h1{
+    color: chocolate;
+    font-weight: 800;
+    margin: 0;
+}
+
+.textfield{
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 10px 0px;
+}
+
+.textfield > input{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    width: 90%;
+    border: none;
+    border-radius: 10px;
+    padding: 15px;
+    background: rgba(19, 4, 4, 0.778);
+    font-size: 12pt;
+    outline: none;
+    box-shadow: 0px 10px 9px rgba(13, 87, 2, 0.45); /*Alteira pois estamos tendo problemas com as sobras no Linux de 5px para 10px*/
+}
+
+.textfield > label{
+    color: antiquewhite;
+    margin-bottom: 10px;
+
+}
+
+input { color: rgb(255, 255, 255) }
+
+
+
+.textfield > input::placeholder{
+    color: rgba(245, 245, 245, 0.657); /* whitesmoke */
+    margin: 10px;
+    font-family: 'Nunito', sans-serif;
+}
+
+
+
+.button-pass{
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 30%;
+    padding: 10px 0px;
+    margin: 25px;
+    border: none;
+
+    border-radius: 8px;
+
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: rgb(0, 100, 0);
+    cursor: pointer;
+    box-shadow: 0px 10px 40px -12px rgb(189, 27, 27); /* rgba(189, 27, 27, 0.444)*/
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, 0.429);
+    font-style: italic;
+    
+}
+
+
+
+
+

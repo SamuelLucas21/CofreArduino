@@ -1,0 +1,162 @@
+#include <Servo.h>
+#include <Keypad.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+
+#define TAM_VETOR 6
+
+const byte LINHAS = 4;
+const byte COLUNAS = 4;
+
+int coluna = 3;
+int linha = 1;
+
+char digitos[LINHAS][COLUNAS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+
+byte pinosLinha[LINHAS] = { 9, 8, 7, 6 };
+byte pinosColuna[COLUNAS] = { 5, 4, 3, 2 };
+
+LiquidCrystal_I2C lcd(0x27,20,4);
+
+Keypad keypad = Keypad( makeKeymap(digitos), pinosLinha, pinosColuna, LINHAS, COLUNAS );
+
+char vetor[TAM_VETOR];
+int posicao = 0;
+int buzzer = 26;
+int tempoBuzz = 50;
+int tempoAberto = 2000;
+
+
+Servo servoMotor;  // Cria um objeto do tipo Servo
+int servoPin = 17;  // Pino de controle do servo motor
+
+bool senhaCorreta = false;
+bool aberto = false;
+
+void setup() {
+  servoMotor.attach(servoPin);  // Conecta o servo motor ao pino definido
+  buzzerAtivo(true);
+  pinMode(buzzer, OUTPUT);
+
+  lcd.init();                      // initialize the lcd
+  lcd.init();
+  // Print a message to the LCD.
+  lcd.backlight();
+  lcd.setCursor(3,0);
+  lcd.print("Password:");
+
+  Serial.begin(9600); // Inicia a comunicação com o monitor serial
+}
+
+void loop() {
+  char digito = keypad.getKey();
+  
+  if (digito != NO_KEY) {
+     Serial.println("Digito: " + String(digito));
+
+    digitalWrite(buzzer, HIGH);
+    delay(tempoBuzz);
+    digitalWrite(buzzer, LOW);
+
+    if (posicao < TAM_VETOR) {
+      vetor[posicao] = digito;
+      posicao++;
+    }
+    
+    // Verifica se o vetor está completo
+    if (posicao == TAM_VETOR) {
+      // Imprime o conteúdo do vetor no monitor serial
+      // Serial.print("Vetor completo: ");
+      for (int i = 0; i < TAM_VETOR; i++) {
+        Serial.print(vetor[i]);
+        Serial.print(" ");
+      }
+      Serial.println();
+      
+      // Reseta o vetor para a próxima sequência
+      posicao = 0;
+      memset(vetor, 0, sizeof(vetor));
+      buzzerAtivo(false);
+      // Envia a sequência para o Python por meio da porta serial
+      for (int i = 0; i < TAM_VETOR; i++) {
+        Serial.print(vetor[i]);
+        Serial.print(" ");
+      }
+      Serial.println();
+    }
+
+    // Verifica se a senha está correta
+    if (senhaPythonCorreta()) {
+      posicao = 0;
+      buzzerAtivo(false);
+
+      lcd.setCursor(0,1);
+      lcd.print("                ");
+      coluna = 3;
+      
+      lcd.setCursor(3,1);
+      lcd.print("!Access!");
+      
+      Serial.println("Cofre Acessado!");
+    }
+   
+    if (digito == '#') {
+      lcd.setCursor(0,1);
+      lcd.print("                ");
+      coluna = 3;
+      servoMotor.write(0); //posição 0
+      delay(1000);  // Aguarda 1 segundo
+      aberto = false;
+      posicao = 0;
+    }
+
+    // Aguarda um curto intervalo antes de ler o próximo dígito
+    delay(100);
+  }
+}
+
+// Verifica se a senha está correta
+/*bool senhaCorreta() {
+  // Implemente a lógica para verificar se a senha digitada está correta
+  // Compare a sequência de dígitos no vetor com a senha correta
+  // Retorne true se a senha estiver correta, false caso contrário
+  // Exemplo de implementação: (substitua pela lógica correta da sua senha)
+  return (strcmp(vetor, "123456") == 0);
+}*/
+
+// Verifica se a senha vinda do Python está correta
+
+void buzzerAtivo(int trancado) {
+  if (trancado) {
+    // Implemente o comportamento quando o buzzer está ativo (trancado)
+  } else {
+    digitalWrite(buzzer, HIGH);
+    delay(tempoBuzz * 10);
+    digitalWrite(buzzer, LOW);
+    delay(tempoAberto);
+    posicao = 0;
+    buzzerAtivo(true);
+  }
+
+}
+
+
+bool senhaPythonCorreta() {
+  // Implemente a lógica para verificar se a senha vinda do Python está correta
+  // Receba a senha via Serial e compare com a senha correta
+  // Retorne true se a senha estiver correta, false caso contrário
+  // Exemplo de implementação: (substitua pela lógica correta da sua senha)
+  if (Serial.available() > 0) {
+    String senhaRecebida = Serial.readStringUntil('\n');
+    return (senhaRecebida == "senha_python");
+  }
+  
+  return false;
+}
+
